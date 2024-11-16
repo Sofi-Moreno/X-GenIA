@@ -4,15 +4,24 @@
  */
 package Model;
 
+import Controller.ConnectionDB;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Sofia Moreno
  */
 public class Usuario {
-    String nombre;
-    String apellido;
-    String usuario;
-    String contraseña;
+    private String nombre;
+    private String apellido;
+    private String usuario;
+    private String contraseña;
+    protected boolean acceso;
 
 //    public static void main(String[] args){
 //        Usuario us = new Usuario();
@@ -28,22 +37,34 @@ public class Usuario {
         apellido = "";
         usuario = "";
         contraseña="";
-        System.out.println("Usuario creado con exito.");
-    }
-
-    public Usuario(String nombre, String apellido, String usuario, String contraseña) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.usuario = usuario;
-        this.contraseña = contraseña;
+        acceso=false;
         System.out.println("Usuario creado con exito.");
     }
     
-    public void imprimirUsuario(){
-        System.out.println(usuario);
-        System.out.println(contraseña);
-        System.out.println(nombre);
-        System.out.println(apellido);
+    public boolean validarUsuarioContraseña(String user, String colum){
+        ConnectionDB con = new ConnectionDB();
+        Connection conex = con.getConnection(); 
+        Statement stmt;
+        ResultSet rs;
+        boolean bol = false;
+        String sql = "SELECT * FROM usuario";
+        try{
+            stmt = conex.createStatement();
+            rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                if(user == rs.getString(colum)){
+                    bol = true;
+                }
+            }
+        }catch(SQLException ex){
+            Logger.getLogger(ConnectionDB.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        return bol;
+    }
+    
+    
+    public void registrarUsuario(){
+        
     }
     
     
@@ -78,4 +99,14 @@ public class Usuario {
     public void setContraseña(String contraseña) {
         this.contraseña = contraseña;
     }
+
+    public boolean isAcceso() {
+        return acceso;
+    }
+
+    public void setAcceso(boolean acceso) {
+        this.acceso = acceso;
+    }
+    
+    
 }
